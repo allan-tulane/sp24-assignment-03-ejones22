@@ -43,27 +43,28 @@ def fast_MED(S, T, MED={}):
 def fast_align_MED(S, T, MED={}):
   if (S, T) in MED:
     return MED[(S, T)]
-
-  elif T == "":
-    MED[(S, T)] = (S, "-" * len(S))
   elif S == "":
     MED[(S, T)] = ("-" * len(T), T)
-
-  elif S[0] == T[0]:
-    align_S, align_T = fast_align_MED(S[1:], T[1:], MED)
-    MED[(S, T)] = (S[0] + align_S, T[0] + align_T)
+    return MED[(S, T)]
+  elif T == "":
+    MED[(S, T)] = (S, "-" * len(S))
+    return MED[(S, T)]
   else:
-    insertS, insertT = fast_align_MED(S, T[1:], MED)
-    deleteS, deleteT = fast_align_MED(S[1:], T, MED)
-
-    insertC = 1 + len(insertS)
-    deleteC = 1 + len(deleteS)
-
-    if insertC <= deleteC:
-      MED[(S, T)] = ("-" + insertS, T[0] + insertT)
+    if S[0] == T[0]:
+      alignS, alignT = fast_align_MED(S[1:], T[1:], MED)
+      MED[(S, T)] = (S[0] + alignS, T[0] + alignT)
     else:
-      MED[(S, T)] = (S[0] + deleteS, "-" + deleteT)
+      insertS, insertT = fast_align_MED(S, T[1:], MED)
+      deleteS, deleteT = fast_align_MED(S[1:], T, MED)
 
-  return MED[(S, T)]
+      insertX = 1 + len(insertS)
+      deleteX = 1 + len(deleteS)
+
+      if insertX <= deleteX:
+        MED[(S, T)] = ("-" + insertS, T[0] + insertT)
+      else:
+        MED[(S, T)] = (S[0] + deleteS, "-" + deleteT)
+
+    return MED[(S, T)]
 
 
