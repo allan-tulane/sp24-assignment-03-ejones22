@@ -1,4 +1,5 @@
-import math, queue
+import math
+import queue
 from collections import Counter
 
 ####### Problem 3 #######
@@ -42,29 +43,36 @@ def fast_MED(S, T, MED={}):
 
 def fast_align_MED(S, T, MED={}):
   if (S, T) in MED:
-    return MED[(S, T)]
-  elif S == "":
-    MED[(S, T)] = ("-" * len(T), T)
-    return MED[(S, T)]
+      return MED[(S, T)]
+
   elif T == "":
-    MED[(S, T)] = (S, "-" * len(S))
-    return MED[(S, T)]
+      MED[(S, T)] = (S, "-" * len(S))
+  elif S == "":
+      MED[(S, T)] = ("-" * len(T), T)
+
+  elif S[0] == T[0]:
+      align_S, align_T = fast_align_MED(S[1:], T[1:], MED)
+      MED[(S, T)] = (S[0] + align_S, T[0] + align_T)
   else:
-    if S[0] == T[0]:
-      alignS, alignT = fast_align_MED(S[1:], T[1:], MED)
-      MED[(S, T)] = (S[0] + alignS, T[0] + alignT)
-    else:
-      insertS, insertT = fast_align_MED(S, T[1:], MED)
-      deleteS, deleteT = fast_align_MED(S[1:], T, MED)
+      insert_S, insert_T = fast_align_MED(S, T[1:], MED)
+      delete_S, delete_T = fast_align_MED(S[1:], T, MED)
 
-      insertX = 1 + len(insertS)
-      deleteX = 1 + len(deleteS)
+      ins_cost = 1 + len(insert_S)
+      del_cost = 1 + len(delete_S)
 
-      if insertX <= deleteX:
-        MED[(S, T)] = ("-" + insertS, T[0] + insertT)
+      if ins_cost <= del_cost:
+          MED[(S, T)] = ("-" + insert_S, T[0] + insert_T)
       else:
-        MED[(S, T)] = (S[0] + deleteS, "-" + deleteT)
+          MED[(S, T)] = (S[0] + delete_S, "-" + delete_T)
 
-    return MED[(S, T)]
+  return MED[(S, T)]
 
+def test_align():
+  for i in range(len(test_cases)):
+    S, T = test_cases[i]
+    align_S, align_T = fast_align_MED(S, T)
+    print(align_S == alignments[i][0] and align_T == alignments[i][1])
+
+
+test_align()
 
