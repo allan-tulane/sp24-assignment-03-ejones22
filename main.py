@@ -53,16 +53,16 @@ def fast_align_MED(S, T, MED={}):
     align_S, align_T = fast_align_MED(S[1:], T[1:], MED)
     MED[(S, T)] = (S[0] + align_S, T[0] + align_T)
   else:
-    SInsert, TInsert = fast_align_MED(S, T[1:], MED)
-    SDelete, TDelete = fast_align_MED(S[1:], T, MED)
+    insertS, insertT = fast_align_MED(S, T[1:], MED)
+    deleteS, deleteT = fast_align_MED(S[1:], T, MED)
 
-    insertX = len(SInsert) + 1
-    deleteX = len(SDelete) + 1
+    insertC = 1 + len(insertS)
+    deleteC = 1 + len(deleteS)
 
-    if insertX <= deleteX:
-      MED[(S, T)] = ("-" + SInsert, T[0] + TInsert)
+    if insertC <= deleteC:
+      MED[(S, T)] = ("-" + insertS, T[0] + insertT)
     else:
-      MED[(S, T)] = (S[0] + SDelete, "-" + TInsert)
+      MED[(S, T)] = (S[0] + deleteS, "-" + deleteT)
 
   return MED[(S, T)]
 
